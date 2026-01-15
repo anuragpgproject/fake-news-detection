@@ -1,0 +1,15 @@
+import importlib.util
+
+libraries = {
+    "pandas": "pandas",
+    "numpy": "numpy",
+    "scikit-learn": "sklearn",
+    "nltk (optional)": "nltk",
+    "matplotlib": "matplotlib"
+}
+
+for name, module in libraries.items():
+    if importlib.util.find_spec(module) is not None:
+        print(f"{name}: ✅ installed")
+    else:
+        print(f"{name}: ❌ NOT installed")
