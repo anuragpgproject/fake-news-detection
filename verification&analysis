@@ -1,0 +1,56 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+fake_df=pd.read_csv("Fake.csv")
+true_df=pd.read_csv("True.csv")
+fake_df["label"]=0
+true_df["label"]=1
+df = pd.concat([fake_df, true_df],axis=0) #merge the two dataframe
+df = df.sample(frac=1, random_state=42).reset_index(drop=True) #shuffle the dataframe for randomness (increase model performance)
+
+#df["date"]=pd.to_datetime(df["date"],errors="coerce") #convert date column to datetime format   
+#df.duplicated().sum() #check for duplicate values
+#df.isnull().sum() #check for null values
+df.info()
+#print(df.shape)
+#print(df.head())
+#print(df.columns)
+#print(df['label'].value_counts())#
+
+#visualization of label distribution
+#df["label"].value_counts().plot(kind="bar")
+#plt.xlabel("label (0=Fake, 1=True)")
+#plt.ylabel("Distribution of Fake vs Real News")
+#plt.show()
+
+#shows how the news is distributed across subjects
+#df["subject"].value_counts().head(10).plot(kind="bar",figsize=(10,5))
+#plt.xlabel("Suject")
+#plt.ylabel("count")
+#plt.title("Top 10 News Subjects")
+#plt.show()
+
+#show how Fake News varies across subjects
+#subject_label_counts = pd.crosstab(df["subject"], df["label"])
+#subject_label_counts.head(10).plot(kind="bar", stacked=True, figsize=(10,5))
+#plt.xlabel("Subject")
+#plt.ylabel("Count")
+#plt.title("Fake vs Real News by Subject")
+#plt.show()
+
+#News distribution over time (date)
+#df["year"] = pd.DatetimeIndex(df["date"]).year 
+#df.groupby("year")["label"].count().plot(kind="line", marker="o")
+#plt.xlabel("Year")
+#plt.ylabel("Number of articles")
+#plt.title("News Articles Over Time")
+#plt.show()
+
+#visualization of text length distribution
+#df["text_length"] = df["text"].apply(len)
+#df.groupby("label")["text_length"].mean()
+#df.boxplot(column="text_length", by="label", figsize=(6,4))
+#plt.xlabel("Label (0 = Fake, 1 = Real)")
+#plt.ylabel("Text Length")
+#plt.title("Text Length Comparison")
+#plt.suptitle("")
+#plt.show()
