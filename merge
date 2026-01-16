@@ -1,0 +1,17 @@
+import pandas as pd
+fake_df=pd.read_csv("Fake.csv")
+true_df=pd.read_csv("True.csv")
+fake_df["label"]=0
+true_df["label"]=1
+df = pd.concat([fake_df, true_df],axis=0) #merge the two dataframes
+df = df.sample(frac=1, random_state=42).reset_index(drop=True) #shuffle the dataframe for randomness (increase model performance)
+
+
+#df["date"]=pd.to_datetime(df["date"],errors="coerce") #convert date column to datetime format   
+#df.duplicated().sum() #check for duplicate values
+#df.isnull().sum() #check for null values
+df.info()
+#print(df.shape)
+#print(df.head())
+#print(df.columns)
+#print(df['label'].value_counts())##
