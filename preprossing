@@ -1,0 +1,61 @@
+import pandas as pd
+#import matplotlib.pyplot as plt
+fake_df=pd.read_csv("Fake.csv")
+true_df=pd.read_csv("True.csv")
+fake_df["label"]=0
+true_df["label"]=1
+df = pd.concat([fake_df, true_df],axis=0) #merge the two dataframe
+df = df.sample(frac=1, random_state=42).reset_index(drop=True) #shuffle the dataframe for randomness (increase model performance)
+print(df.info())
+print(df.columns)
+print(df.head())
+
+
+#data cleaning and featured engineering
+import re
+df["content"]=df["title"]+" "+df["text"] #combine title and text column for better context
+
+def clean_text(text):
+    text=text.lower() #lowercase
+    text=re.sub(r'\d+',' ',text) #remove numbers
+    text=re.sub(r'[^\w\s]',' ',text) #remove punctuation
+    text=re.sub(r'\s+',' ',text) #remove extra spaces
+    return text
+df["content"]=df["content"].apply(clean_text)
+
+df["subject"]=df["subject"].str.lower().str.strip() #clean subject column
+
+df["date"]=pd.to_datetime(df["date"],errors="coerce") #convert date column to datetime format
+df["year"]=df["date"].dt.year #extract year from date column
+df["month"]=df["date"].dt.month #extract month from date column
+df["day"]=df["date"].dt.day #extract day from date column
+
+df=df.drop(columns=["title","text","date"])#drop unused columns
+
+print(df.columns)
+print(df.head())
+print(df.info())
+
+
+#Feature Vectorization and Encoding
+#features X and label y
+X_text=df["content"]
+X_subject=df["subject"]
+X_date=df["year","month","day"]
+y=df["label"]
+
+#Text Vectorization using TF-IDF
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf=TfidfVectorizer(
+    stop_words="english",
+    max_df=0.7,
+    min_df=5
+)
+x_tfidf=tfidf.fit_transform(X_text)
+
+#Subject Encoding using One-Hot Encoding
+from sklearn.preprocessing import OneHotEncoder
+subject_encoder=OneHotEncoder(handle_unknown="ignore",sparse=True)
+X_subject_encoder=subject_encoder.fit.transform(X_subject.values.reshape(-1,1))
+
+#scale date features
